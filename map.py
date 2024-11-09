@@ -4,6 +4,7 @@ import random
 from pytmx import load_pygame
 from tile import *
 from asteroid import Asteroid
+from ui import UI
 
 
 class Map:
@@ -23,7 +24,8 @@ class Map:
         self.visible_sprites = YSortCameraGroup()
         self.visible_sprites.add(self.player)
         self.load_map()
-        self.spawn_asteroids(3)
+        self.spawn_asteroids(5)
+        self.ui = UI()
         
     def load_map(self):
         for layer in self.tmx_data.visible_layers:
@@ -63,6 +65,7 @@ class Map:
             self.visible_sprites.update()
             self.door_sprites.update()
             self.asteroid_sprites.update()
+            self.ui.display(self.player)
             
     def spawn_asteroids(self, count):
         for _ in range(count):
