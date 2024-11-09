@@ -3,6 +3,7 @@ import sys
 import random
 from pytmx import load_pygame
 from tile import *
+from asteroid import Asteroid
 
 
 class Map:
@@ -13,6 +14,7 @@ class Map:
         self.startpos = startpos
         self.tmx_data = load_pygame(directory)
         self.display_surface = pg.display.get_surface()
+        self.asteroid_sprites = pg.sprite.Group()
         self.door_sprites = pg.sprite.Group()
         self.background_sprites = NoSortCameraGroup()
         self.obstacle_sprites = pg.sprite.Group()
@@ -21,6 +23,7 @@ class Map:
         self.visible_sprites = YSortCameraGroup()
         self.visible_sprites.add(self.player)
         self.load_map()
+        self.spawn_asteroids(100)
         
     def load_map(self):
         for layer in self.tmx_data.visible_layers:
@@ -48,7 +51,7 @@ class Map:
     
     def update_player_info(self, pos=0):
         self.player.set_sprites(self.obstacle_sprites,
-                                self.door_sprites)
+                                self.door_sprites, self.ship_sprites)
     
     def run(self):
         if self.active:
@@ -59,9 +62,14 @@ class Map:
             self.ground_sprites.update()
             self.visible_sprites.update()
             self.door_sprites.update()
-    
-
-                
+            self.asteroid_sprites.update()
+            
+    def spawn_asteroids(self, count):
+        for _ in range(count):
+            pos = (random.randint(0, 1280), random.randint(0, 720))
+            self.asteroid_sprites.add(Asteroid(pos))
+            self.visible_sprites.add(Asteroid(pos))
+                    
 
 class YSortCameraGroup(pg.sprite.Group):
     def __init__(self):
