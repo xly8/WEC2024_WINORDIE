@@ -14,7 +14,7 @@ class Game:
 
         # Initialize Spaceship in addition to Player, if keeping both
         self.player = Player()  # Keep this if needed
-        self.spaceship = Spaceship(start_position=(640, 360))  # New spaceship instance
+        self.spaceship = Spaceship(start_position=(800, 360))  # New spaceship instance
         
         # Bullet management
         self.bullets = pg.sprite.Group()
