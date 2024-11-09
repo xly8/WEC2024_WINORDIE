@@ -7,6 +7,12 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("Resources/AstronautImages/down1.png")
         self.rect = self.image.get_rect(center=(2080, 1168))
+        self.direction = pygame.math.Vector2()
+        self.speed = 4
+        self.hitbox = self.rect.inflate(-35, -20)
+        self.current_room = 0
+        self.obstacle_sprites = None
+        self.door_sprites = None
         self.health = 3
         self.max_health = 3
         self.ammo = 50
@@ -15,9 +21,40 @@ class Player(pygame.sprite.Sprite):
         self.shooting_speed = 1
         self.projectile_count = 1
 
-    def move(self, dx, dy):
-        self.rect.x += dx
-        self.rect.y += dy
+    def set_sprites(self, obstacle_sprites, door_sprites):
+        self.obstacle_sprites = obstacle_sprites
+        self.door_sprites = door_sprites
+
+    def input(self):
+        # gets the key inputs from the pygame module and stores it in a variable
+        keys = pygame.key.get_pressed()
+        # changes the direction of the player based on the key pressed
+        if keys[pygame.K_w]:
+            self.direction.y = -1
+            self.status = 'up'
+        elif keys[pygame.K_s]:
+            self.direction.y = 1
+            self.status = 'down'
+            # resets direction to 0 if no key is currently being pressed
+        else:
+            self.direction.y = 0
+        if keys[pygame.K_a]:
+            self.direction.x = -1
+            self.status = 'left'
+        elif keys[pygame.K_d]:
+            self.direction.x = 1
+            self.status = 'right'
+        else:
+            self.direction.x = 0
+        
+
+    def move(self):
+        self.hitbox.x += self.direction.x * self.speed
+        self.collision('h')
+        self.hitbox.y += self.direction.y * self.speed
+        self.collision('v')
+        self.rect.center = self.hitbox.center
+        
 
     def shoot(self):
         if self.ammo > 0:
@@ -26,17 +63,8 @@ class Player(pygame.sprite.Sprite):
             self.ammo -= 1
 
     def update(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            self.move(-5, 0)
-        if keys[pygame.K_d]:
-            self.move(5, 0)
-        if keys[pygame.K_w]:
-            self.move(0, -5)
-        if keys[pygame.K_s]:
-            self.move(0, 5)
-        if keys[pygame.K_SPACE]:
-            self.shoot()
+        self.input()
+        self.move()
         
         for projectile in self.projectiles:
             projectile.update()
@@ -59,3 +87,28 @@ class Player(pygame.sprite.Sprite):
             self.max_health += 1
         elif power_type == "max_ammo":
             self.max_ammo += 10
+    
+    def collision(self, direction):
+        # collision detection method with one argument for vertical and horizontal
+        if direction == 'h':
+            # checks if there is any collisions with the sprite if it is moving horizontally
+            # if so, depending on the direction will move the player to left or right of obstacle
+            for sprite in self.obstacle_sprites:
+                if sprite.hitbox.colliderect(self.hitbox):
+                    if self.direction.x > 0:
+                        self.hitbox.right = sprite.hitbox.left
+                    if self.direction.x < 0:
+                        self.hitbox.left = sprite.hitbox.right
+        # same concept as above but for the vertical collisions
+        if direction == 'v':
+            for sprite in self.obstacle_sprites:
+                if sprite.hitbox.colliderect(self.hitbox):
+                    if self.direction.y > 0:
+                        self.hitbox.bottom = sprite.hitbox.top
+                    if self.direction.y < 0:
+                        self.hitbox.top = sprite.hitbox.bottom
+        for sprite in self.door_sprites:
+            if sprite.hitbox.colliderect(self.hitbox):
+                if sprite.door_name == 'Merchant':
+                    self.current_room = 0
+        

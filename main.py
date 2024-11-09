@@ -16,6 +16,7 @@ class Game:
         self.main_map = map.Map('tsx/CastleMap.tmx',
                                 self.player, (1194, 666))
         self.current_map = self.main_map
+        self.current_map.update_player_info()
         self.delta_time = 1
         self.run()
         

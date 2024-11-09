@@ -46,7 +46,9 @@ class Map:
                 elif layer.name in decor_list:
                     Tile(pos, self.visible_sprites, surf)
     
-    
+    def update_player_info(self, pos=0):
+        self.player.set_sprites(self.obstacle_sprites,
+                                self.door_sprites)
     
     def run(self):
         if self.active:
