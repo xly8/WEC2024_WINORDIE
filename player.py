@@ -40,6 +40,10 @@ class Player(pygame.sprite.Sprite):
         self.animation_speed = 0.08
         self.last_update = time.time()
         self.facing = 'down'  # Default facing direction
+        self.ship_up = self.load_ship_images()
+        self.ship_down = self.rotate_images(self.ship_up, 180)
+        self.ship_left = self.rotate_images(self.ship_up, 90)
+        self.ship_right = self.rotate_images(self.ship_up, 270)
         self.walk_left = self.load_walk_images('left')
         self.walk_right = self.load_walk_images('right')
         self.walk_up = self.load_walk_images('up')
@@ -50,6 +54,18 @@ class Player(pygame.sprite.Sprite):
             pygame.image.load(f"Resources/AstronautImages/{direction}{i}.png")
             for i in range(1, 5)
         ]
+    
+    def rotate_images(self, images, angle):
+        return [pygame.transform.rotate(image, angle) for image in images]
+    
+    def load_ship_images(self):
+        images = [
+            pygame.image.load(f"Resources/ShipImages/ship{i}.png")
+            for i in range(1, 5)
+        ]
+        # Scale images to be bigger
+        scale_factor = 2  # Adjust this factor as needed
+        return [pygame.transform.scale(image, (image.get_width() * scale_factor, image.get_height() * scale_factor)) for image in images]
 
     def set_sprites(self, obstacle_sprites, door_sprites, ship_sprites, asteroid_sprites):
         self.obstacle_sprites = obstacle_sprites
@@ -86,13 +102,26 @@ class Player(pygame.sprite.Sprite):
             self.animation_index = (self.animation_index + 1) % 4
             self.last_update = current_time
             if self.facing == 'left':
-                self.image = self.walk_left[self.animation_index]
+                if self.is_ship:
+                    self.image = self.ship_left[self.animation_index]
+                else: 
+                    self.image = self.walk_left[self.animation_index]
+
             elif self.facing == 'right':
-                self.image = self.walk_right[self.animation_index]
+                if self.is_ship:
+                    self.image = self.ship_right[self.animation_index]
+                else: 
+                    self.image = self.walk_right[self.animation_index]
             elif self.facing == 'up':
-                self.image = self.walk_up[self.animation_index]
+                if self.is_ship:
+                    self.image = self.ship_up[self.animation_index]
+                else: 
+                    self.image = self.walk_up[self.animation_index]
             elif self.facing == 'down':
-                self.image = self.walk_down[self.animation_index]
+                if self.is_ship:
+                    self.image = self.ship_down[self.animation_index]
+                else: 
+                    self.image = self.walk_down[self.animation_index]
 
     def move(self):
         self.hitbox.x += self.direction.x * self.speed
