@@ -2,8 +2,7 @@ import pygame as pg
 import sys
 import map
 from player import *
-
-
+from repairCenter import RepairCenter
 
 class Game:
     def __init__(self):
@@ -18,6 +17,7 @@ class Game:
         self.current_map = self.main_map
         self.current_map.update_player_info()
         self.delta_time = 1
+        self.repair_center = RepairCenter(Player())
         self.run()
         
     def update(self):
@@ -32,11 +32,19 @@ class Game:
                 sys.exit()
     
     def run(self):
+        shop = False
         while True:
             self.check_events()
             self.update()
             self.draw()
-            
+            if pg.key.get_pressed()[pg.K_p] and shop == False:
+                self.shop = not shop
+                self.repair_center.display()
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
+    
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.current_map.run()

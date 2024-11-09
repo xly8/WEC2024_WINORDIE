@@ -42,13 +42,13 @@ class Bullet(pygame.sprite.Sprite):
         if not (0 <= self.rect.x <= WIDTH) or not (0 <= self.rect.y <= HEIGHT):
             self.kill()
 
-class Player(pygame.sprite.Sprite):
+class Spaceship(pygame.sprite.Sprite):
     def __init__(self, start_position):
         super().__init__()
         
         # Original image (a pointy arrow pointing right by default)
-        self.original_image = pygame.Surface((50, 50), pygame.SRCALPHA)
-        pygame.draw.polygon(self.original_image, BLUE, [(50, 25), (0, 5), (0, 45)])  # Pointy arrow shape pointing right
+        self.original_image = pygame.image.load("tsx/Main Ship - Fighter Design.png")
+        
         self.image = self.original_image
         self.rect = self.image.get_rect(center=start_position)
         
@@ -101,12 +101,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_w]:  # Accelerate forward
             self.accelerate(delta_time)
             # Change color when moving forward
-            self.original_image.fill((0, 0, 0, 0))  # Clear previous drawing
-            pygame.draw.polygon(self.original_image, LIGHT_BLUE, [(50, 25), (0, 5), (0, 45)])
-        else:
-            # Set color back to default if not moving forward
-            self.original_image.fill((0, 0, 0, 0))  # Clear previous drawing
-            pygame.draw.polygon(self.original_image, BLUE, [(50, 25), (0, 5), (0, 45)])
+        
 
         # Update image with current rotation and color
         self.image = pygame.transform.rotate(self.original_image, -self.angle)
@@ -140,7 +135,7 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # Sprite setup
-        self.player = Player(start_position=(WIDTH // 2, HEIGHT // 2))
+        self.player = Spaceship(start_position=(WIDTH // 2, HEIGHT // 2))
         self.all_sprites = pygame.sprite.Group(self.player)
         self.bullets = pygame.sprite.Group()  # Group to hold bullets
         
