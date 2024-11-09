@@ -11,13 +11,17 @@ class Game:
         pg.init()
         self.screen = pg.display.set_mode((1280, 720))
         self.clock = pg.time.Clock()
+        self.in_ship = False
         # Initialize Spaceship in addition to Player, if keeping both
         self.player = Player()  # Keep this if needed
-        
-        
-      
-        
-        self.main_map = map.Map('tsx/CastleMap.tmx', self.player, (1194, 666))
+        self.spaceship = Spaceship()
+        self.main_map = map.Map(
+            directory='tsx/CastleMap.tmx',
+            player=self.player,
+            spaceship=self.spaceship,  # Add spaceship parameter
+            in_ship=self.in_ship,
+            startpos=(1194, 666)
+        )
         self.current_map = self.main_map
         self.current_map.update_player_info()
         self.delta_time = 1

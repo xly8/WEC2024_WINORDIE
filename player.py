@@ -1,6 +1,7 @@
 import pygame
 from projectile import Projectile
 import time
+from spaceship import Bullet
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -49,6 +50,7 @@ class Player(pygame.sprite.Sprite):
         self.walk_up = self.load_walk_images('up')
         self.walk_down = self.load_walk_images('down')
 
+
     def load_walk_images(self, direction):
         return [
             pygame.image.load(f"Resources/AstronautImages/{direction}{i}.png")
@@ -92,9 +94,7 @@ class Player(pygame.sprite.Sprite):
             self.facing = 'right'
         else:
             self.direction.x = 0
-
-        if keys[pygame.K_SPACE]:
-            self.shoot()
+                  
 
     def animate(self):
         current_time = time.time()
@@ -129,12 +129,6 @@ class Player(pygame.sprite.Sprite):
         self.hitbox.y += self.direction.y * self.speed
         self.collision('v')
         self.rect.center = self.hitbox.center
-
-    def shoot(self):
-        if self.ammo > 0:
-            for _ in range(self.projectile_count):
-                self.projectiles.append(Projectile(self.rect.center))
-            self.ammo -= 1
 
     def apply_power_up(self, power_type):
         if power_type == "shooting_speed":

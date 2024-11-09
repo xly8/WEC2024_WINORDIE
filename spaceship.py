@@ -22,26 +22,33 @@ ROTATION_SPEED = 200    # Degrees per second for rotation
 BULLET_SPEED = 400      # Speed of the bullet
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, position, angle):
+    def __init__(self, pos, direction, speed=8, damage=1):
         super().__init__()
-        self.image = pygame.Surface((10, 4), pygame.SRCALPHA)
-        pygame.draw.rect(self.image, WHITE, (0, 0, 10, 4))
-        
-        # Rotate bullet image to match player's angle
-        self.image = pygame.transform.rotate(self.image, -angle)
-        self.rect = self.image.get_rect(center=position)
+        self.image = pygame.image.load("Resources/WeaponImages/FirstWeapon.png")
+        self.rect = self.image.get_rect(center=pos)
+        self.hitbox = self.rect.inflate(-5, -5)
+        self.direction = direction
+        self.speed = speed
+        self.damage = damage
 
-        # Set movement direction based on angle
-        radian_angle = math.radians(angle)
-        self.velocity = pygame.Vector2(math.cos(radian_angle), math.sin(radian_angle)) * BULLET_SPEED
-
-    def update(self, delta_time):
-        # Move the bullet
-        self.rect.center += self.velocity * delta_time
+    def update(self):
+        """Move the bullet in the facing direction."""
+        # Ensure direction is a tuple (x, y) and calculate movement
+        if isinstance(self.direction, (tuple, list)) and len(self.direction) == 2:
+            movement = (self.direction[0] * self.speed, self.direction[1] * self.speed)
+        else:
+            raise ValueError("Direction must be a tuple or list with two components (x, y).")
         
-        # Remove the bullet if it goes off screen
-        if not (0 <= self.rect.x <= WIDTH) or not (0 <= self.rect.y <= HEIGHT):
+        # Update bullet position
+        self.rect.center = (self.rect.center[0] + movement[0], self.rect.center[1] + movement[1])
+        self.hitbox.center = self.rect.center
+
+        # Remove the bullet when it leaves the screen
+        if not pygame.display.get_surface().get_rect().colliderect(self.rect):
             self.kill()
+
+
+
 
 class Spaceship(pygame.sprite.Sprite):
     def __init__(self):
