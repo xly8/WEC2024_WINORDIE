@@ -32,11 +32,19 @@ class Game:
                 sys.exit()
     
     def run(self):
+        shop = False
         while True:
             self.check_events()
             self.update()
             self.draw()
-            
+            if pg.key.get_pressed()[pg.K_p] and shop == False:
+                self.shop = not shop
+                self.RepairCenter.display()
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
+    
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.current_map.run()

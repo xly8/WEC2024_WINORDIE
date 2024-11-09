@@ -27,7 +27,7 @@ class Player(pygame.sprite.Sprite):
         self.animation_index = 0
         self.animation_speed = 0.08
         self.last_update = time.time()
-        self.facing = 'down'  # default facing direction
+        self.facing = 'down'  # Default facing direction
         self.walk_left = self.load_walk_images('left')
         self.walk_right = self.load_walk_images('right')
         self.walk_up = self.load_walk_images('up')
