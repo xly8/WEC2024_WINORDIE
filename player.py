@@ -6,7 +6,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("Resources/AstronautImages/down1.png")
-        self.rect = self.image.get_rect(center=(400, 300))
+        self.rect = self.image.get_rect(center=(2080, 1168))
         self.health = 3
         self.max_health = 3
         self.ammo = 50
