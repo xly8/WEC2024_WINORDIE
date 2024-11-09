@@ -19,6 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.current_room = 0
         self.obstacle_sprites = None
         self.door_sprites = None
+        self.ship_sprites = None
         self.health = self.stats["health"]
         self.max_health = self.stats["max_health"]
         self.ammo = self.stats["ammo"]
@@ -45,9 +46,10 @@ class Player(pygame.sprite.Sprite):
             for i in range(1, 5)
         ]
 
-    def set_sprites(self, obstacle_sprites, door_sprites):
+    def set_sprites(self, obstacle_sprites, door_sprites, ship_sprites):
         self.obstacle_sprites = obstacle_sprites
         self.door_sprites = door_sprites
+        self.ship_sprites = ship_sprites
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -132,6 +134,9 @@ class Player(pygame.sprite.Sprite):
             if sprite.hitbox.colliderect(self.hitbox):
                 if sprite.door_name == 'Merchant':
                     self.current_room = 0
+        for sprite in self.ship_sprites:
+            if sprite.hitbox.colliderect(self.hitbox):
+                print("touching ship")
 
     def update(self):
         self.input()
