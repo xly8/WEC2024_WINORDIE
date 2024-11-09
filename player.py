@@ -20,6 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.obstacle_sprites = None
         self.door_sprites = None
         self.ship_sprites = None
+        self.asteroid_sprites = None
         self.health = self.stats["health"]
         self.max_health = self.stats["max_health"]
         self.ammo = self.stats["ammo"]
@@ -27,6 +28,9 @@ class Player(pygame.sprite.Sprite):
         self.projectiles = []
         self.shooting_speed = self.stats["shooting_speed"]
         self.projectile_count = self.stats["projectile_count"]
+        self.score = 0
+        self.last_damage_time = time.time()
+        self.damage_interval = 1  # Time (in seconds) between damage
 
         # Animation settings
         self.last_pressed_key = None
@@ -46,10 +50,11 @@ class Player(pygame.sprite.Sprite):
             for i in range(1, 5)
         ]
 
-    def set_sprites(self, obstacle_sprites, door_sprites, ship_sprites):
+    def set_sprites(self, obstacle_sprites, door_sprites, ship_sprites, asteroid_sprites):
         self.obstacle_sprites = obstacle_sprites
         self.door_sprites = door_sprites
         self.ship_sprites = ship_sprites
+        self.asteroid_sprites = asteroid_sprites
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -116,6 +121,7 @@ class Player(pygame.sprite.Sprite):
             self.max_ammo += 10
 
     def collision(self, direction):
+        current_time = time.time()
         if direction == 'h':
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
@@ -137,6 +143,13 @@ class Player(pygame.sprite.Sprite):
         for sprite in self.ship_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
                 print("touching ship")
+        for sprite in self.asteroid_sprites:
+            if sprite.hitbox.colliderect(self.hitbox):
+                sprite.take_damage(5)
+                # Check if enough time has passed since last damage
+                if current_time - self.last_damage_time >= self.damage_interval:
+                    self.health -= 1
+                    self.last_damage_time = current_time
 
     def update(self):
         self.input()

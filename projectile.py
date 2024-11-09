@@ -7,7 +7,9 @@ class Projectile:
         self.speed = -10
 
     def update(self):
-        self.rect.y += self.speed
+        # self.rect.y += self.speed
+        pass
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
+        # screen.blit(self.image, self.rect)
+        pass
