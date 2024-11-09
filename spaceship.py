@@ -12,8 +12,7 @@ BULLET_SPEED = 400
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, position, angle):
         super().__init__()
-        self.image = pygame.Surface((10, 4), pygame.SRCALPHA)
-        pygame.draw.rect(self.image, (255, 255, 255), (0, 0, 10, 4))
+        self.image = pygame.image.load("Resources/WeaponImages/FirstWeapon.png")
         self.image = pygame.transform.rotate(self.image, -angle)
         self.rect = self.image.get_rect(center=position)
 
