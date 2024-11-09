@@ -35,8 +35,6 @@ class Player(pygame.sprite.Sprite):
         self.damage_interval = 1  # Time (in seconds) between damage
 
         # Animation settings
-        self.last_pressed_key = None
-        self.pressed_keys = set()
         self.animation_index = 0
         self.animation_speed = 0.08
         self.last_update = time.time()
@@ -77,14 +75,15 @@ class Player(pygame.sprite.Sprite):
 
     def input(self):
         keys = pygame.key.get_pressed()
+        # Reset direction
+        self.direction = pygame.math.Vector2(0, 0)
+
         if keys[pygame.K_w]:
             self.direction.y = -1
             self.facing = 'up'
         elif keys[pygame.K_s]:
             self.direction.y = 1
             self.facing = 'down'
-        else:
-            self.direction.y = 0
 
         if keys[pygame.K_a]:
             self.direction.x = -1
@@ -101,26 +100,35 @@ class Player(pygame.sprite.Sprite):
         if current_time - self.last_update > self.animation_speed:
             self.animation_index = (self.animation_index + 1) % 4
             self.last_update = current_time
-            if self.facing == 'left':
-                if self.is_ship:
-                    self.image = self.ship_left[self.animation_index]
-                else: 
+            if self.is_ship:
+                # Update ship animation for facing direction, including diagonals
+                if self.direction.x > 0 and self.direction.y < 0:  # Up-Right
+                    self.image = pygame.transform.rotate(self.ship_up[self.animation_index], -45)
+                elif self.direction.x > 0 and self.direction.y > 0:  # Down-Right
+                    self.image = pygame.transform.rotate(self.ship_down[self.animation_index], 45)
+                elif self.direction.x < 0 and self.direction.y < 0:  # Up-Left
+                    self.image = pygame.transform.rotate(self.ship_up[self.animation_index], 45)
+                elif self.direction.x < 0 and self.direction.y > 0:  # Down-Left
+                    self.image = pygame.transform.rotate(self.ship_down[self.animation_index], -45)
+                else:
+                    # Set straight directions
+                    if self.facing == 'left':
+                        self.image = self.ship_left[self.animation_index]
+                    elif self.facing == 'right':
+                        self.image = self.ship_right[self.animation_index]
+                    elif self.facing == 'up':
+                        self.image = self.ship_up[self.animation_index]
+                    elif self.facing == 'down':
+                        self.image = self.ship_down[self.animation_index]
+            else:
+                # Regular astronaut animation
+                if self.facing == 'left':
                     self.image = self.walk_left[self.animation_index]
-
-            elif self.facing == 'right':
-                if self.is_ship:
-                    self.image = self.ship_right[self.animation_index]
-                else: 
+                elif self.facing == 'right':
                     self.image = self.walk_right[self.animation_index]
-            elif self.facing == 'up':
-                if self.is_ship:
-                    self.image = self.ship_up[self.animation_index]
-                else: 
+                elif self.facing == 'up':
                     self.image = self.walk_up[self.animation_index]
-            elif self.facing == 'down':
-                if self.is_ship:
-                    self.image = self.ship_down[self.animation_index]
-                else: 
+                elif self.facing == 'down':
                     self.image = self.walk_down[self.animation_index]
 
     def move(self):
@@ -140,15 +148,17 @@ class Player(pygame.sprite.Sprite):
         elif power_type == "ammo":
             self.ammo = min(self.ammo + 15, self.max_ammo)
         elif power_type == "max_health":
-            self.max_health += 1
+            self.stats["max_health"] += 1
+            self.max_health = self.stats["max_health"]
         elif power_type == "max_ammo":
             self.max_ammo += 10
+        print(self.max_health)
 
     def collision(self, direction):
         current_time = time.time()
         if direction == 'h':
             for sprite in self.obstacle_sprites:
-                if self.is_ship == False:
+                if not self.is_ship:
                     if sprite.hitbox.colliderect(self.hitbox):
                         if self.direction.x > 0:
                             self.hitbox.right = sprite.hitbox.left
@@ -156,7 +166,7 @@ class Player(pygame.sprite.Sprite):
                             self.hitbox.left = sprite.hitbox.right
         if direction == 'v':
             for sprite in self.obstacle_sprites:
-                if self.is_ship == False:
+                if not self.is_ship:
                     if sprite.hitbox.colliderect(self.hitbox):
                         if self.direction.y > 0:
                             self.hitbox.bottom = sprite.hitbox.top
@@ -168,7 +178,7 @@ class Player(pygame.sprite.Sprite):
                     self.current_room = 0
         for sprite in self.ship_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
-                if self.is_ship == False:
+                if not self.is_ship:
                     self.is_ship = True
         for sprite in self.asteroid_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
@@ -186,7 +196,6 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-        
         
     def get_value_by_index(self, index):
         return list(self.stats.values())[index]

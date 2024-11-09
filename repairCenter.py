@@ -137,10 +137,11 @@ class Upgrade_interface:
         if player.upgrade_points >= player.upgrade_cost[upgrade_attribute] and player.stats[upgrade_attribute] < player.max_stats[upgrade_attribute]:
             player.upgrade_points -= player.upgrade_cost[upgrade_attribute]
             player.stats[upgrade_attribute] += player.upgrade_stats[upgrade_attribute]
+            player.apply_power_up(upgrade_attribute)
             player.stats_level[upgrade_attribute] += 1
             player.upgrade_cost[upgrade_attribute] = 100 * \
                 (player.stats_level[upgrade_attribute] ** 2)
-            player.health = player.stats['health']
+            player.health = player.stats['max_health']
 
         if player.stats[upgrade_attribute] > player.max_stats[upgrade_attribute]:
             player.stats[upgrade_attribute] = player.max_stats[upgrade_attribute]

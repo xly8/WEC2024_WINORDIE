@@ -8,9 +8,9 @@ class Asteroid(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("Resources/AsteroidImages/explode1.png")
         self.rect = self.image.get_rect(center=pos)
-        self.hitbox = self.rect.copy()
+        self.hitbox = self.rect.inflate(0, -10)
         self.health = 10
-        self.speed = 3
+        self.speed = 0.5
         self.target = target
         self.is_dying = False  # Track if asteroid is in the dying state
 
@@ -24,6 +24,10 @@ class Asteroid(pygame.sprite.Sprite):
         self.animation_index = 0
         self.last_update = time.time()
         self.animation_speed = 0.1
+        
+        # Timer for speed increase
+        self.last_speed_increase = time.time()  # Track when the speed was last increased
+        self.speed_increase_interval = 10  # Seconds
 
     def load_asteroid_images(self):
         """Load explosion images for the asteroid death animation."""
@@ -35,9 +39,18 @@ class Asteroid(pygame.sprite.Sprite):
     def update(self):
         """Update asteroid position or play explosion animation if dying."""
         if self.health > 0 and not self.is_dying:
+            self.increase_speed_over_time()
             self.move()
         else:
             self.animate()
+            
+    def increase_speed_over_time(self):
+        """Increase speed by 1 every 30 seconds."""
+        current_time = time.time()
+        if current_time - self.last_speed_increase >= self.speed_increase_interval:
+            self.speed += 0.5  # Increase speed by 0.5
+            self.last_speed_increase = current_time  # Reset the timer
+            print(f"Asteroid speed increased to: {self.speed}")
     
     def move(self):
         """Move the asteroid toward the target."""
