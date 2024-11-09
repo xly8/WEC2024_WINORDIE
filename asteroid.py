@@ -31,7 +31,7 @@ class Asteroid(pygame.sprite.Sprite):
     
     def move(self):
         """Move the asteroid to the left and remove it when off screen."""
-        self.rect.x = random(-1, 1) * self.speed
+        self.rect.x += self.speed
         if self.rect.right < 0:
             self.kill()
 
