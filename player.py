@@ -55,12 +55,10 @@ class Player(pygame.sprite.Sprite):
         self.collision('v')
         self.rect.center = self.hitbox.center
         
-
-    def shoot(self):
-        if self.ammo > 0:
-            for _ in range(self.projectile_count):
-                self.projectiles.append(Projectile(self.rect.center))
-            self.ammo -= 1
+    def get_cost_by_index(self, index):
+        return list(self.upgrade_cost.values())[index]
+    def get_level_by_index(self, index):
+        return list(self.stats.values())[index]
 
     def update(self):
         self.input()
