@@ -35,14 +35,22 @@ class UI:
 
     def show_score(self, exp):
         text_surf = self.font.render(f'Score: {int(exp)}', False, 'white')
-        text_rect = text_surf.get_rect(topleft=self.health_rect.bottomleft)
+        self.text_rect = text_surf.get_rect(topleft=self.health_rect.bottomleft)
+
+        self.display_surface.blit(text_surf, self.text_rect)
+        
+    def show_ammo(self, ammo):
+        text_surf = self.font.render(f'Ammo: {int(ammo)}', False, 'white')
+        text_rect = text_surf.get_rect(topleft=self.text_rect.bottomleft)
 
         self.display_surface.blit(text_surf, text_rect)
 
     def display(self, player):
         self.show_bar(
-            player.health, player.stats["max_health"], self.health_bar_rect, 'red')
+            player.health, player.max_health, self.health_bar_rect, 'red')
 
-        self.show_text(player.health, player.stats["max_health"])
+        self.show_text(player.health, player.max_health)
 
         self.show_score(player.score)
+        
+        self.show_ammo(player.ammo)

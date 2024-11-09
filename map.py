@@ -88,10 +88,11 @@ class Map:
             self.visible_sprites.update()
             self.door_sprites.update()
             self.asteroid_sprites.update()
-
+            self.ui.display(self.player)
+            
             # Update enemies and player collisions
             self.update_enemies()
-            self.ui.display(self.player)
+            self.collide_asteroids()
             
     def spawn_asteroids(self, count):
         for _ in range(count):
@@ -135,6 +136,12 @@ class Map:
                 asteroid.take_damage(5)
                 if asteroid.health <= 0:
                     asteroid.kill()
+                    self.player.score += 10
+                    
+        # Check for game over
+        if self.player.health <= 0:
+            print("Game over!")  
+                    
 
 class YSortCameraGroup(pg.sprite.Group):
     def __init__(self):
