@@ -8,9 +8,10 @@ class Asteroid(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("Resources/AsteroidImages/explode1.png")
         self.rect = self.image.get_rect(center=pos)
+        self.hitbox = self.rect.copy()
         self.health = 10
-        self.speed = 2
-        self.target = target  # Destination coordinates (2080, 1168)
+        self.speed = 3
+        self.target = target
         self.is_dying = False  # Track if asteroid is in the dying state
 
         # Calculate the direction vector to the target
@@ -56,6 +57,8 @@ class Asteroid(pygame.sprite.Sprite):
         move_vector = (target_position - current_position).normalize() * self.speed
         self.rect.centerx += move_vector.x
         self.rect.centery += move_vector.y
+        
+        self.hitbox.center = self.rect.center
 
     def take_damage(self, amount):
         """Reduce health by the specified amount and trigger death if health <= 0."""
@@ -72,6 +75,7 @@ class Asteroid(pygame.sprite.Sprite):
                 # Advance to the next explosion frame
                 self.animation_index += 1
                 self.image = self.asteroid_dying[self.animation_index]
+                self.hitbox = pygame.Rect(0, 0, 0, 0)
             else:
                 self.kill()
 
