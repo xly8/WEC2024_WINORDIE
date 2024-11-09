@@ -1,8 +1,9 @@
 import pygame as pg
 import sys
 import map
-from player import *
+from player import *  # Keep the original player if needed
 from repairCenter import RepairCenter
+from spaceship import Spaceship, Bullet  # Import your spaceship and bullet classes
 
 class Game:
     def __init__(self):
@@ -10,10 +11,15 @@ class Game:
         pg.init()
         self.screen = pg.display.set_mode((1280, 720))
         self.clock = pg.time.Clock()
+
+        # Initialize Spaceship in addition to Player, if keeping both
+        self.player = Player()  # Keep this if needed
+        self.spaceship = Spaceship(start_position=(640, 360))  # New spaceship instance
         
-        self.player = Player()
-        self.main_map = map.Map('tsx/CastleMap.tmx',
-                                self.player, (1194, 666))
+        # Bullet management
+        self.bullets = pg.sprite.Group()
+        
+        self.main_map = map.Map('tsx/CastleMap.tmx', self.player, (1194, 666))
         self.current_map = self.main_map
         self.current_map.update_player_info()
         self.delta_time = 1
@@ -23,34 +29,52 @@ class Game:
         
     def update(self):
         pg.display.flip()
-        self.delta_time = self.clock.tick(60)
+        self.delta_time = self.clock.tick(60) / 1000  # in seconds for smooth animation
         pg.display.set_caption(f"FPS: {self.clock.get_fps()}")
 
-    def check_events(self):
+        # Update Spaceship and Bullets
+        keys = pg.key.get_pressed()
+        self.spaceship.update(self.delta_time, keys)
+        self.bullets.update(self.delta_time)
+        
+        # Remove bullets off screen
+        for bullet in self.bullets:
+            if not self.screen.get_rect().colliderect(bullet.rect):
+                bullet.kill()
+
+    def handle_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
-    
-    def run(self):
-        while True:
-            self.check_events()
-            self.update()
-            self.draw()
-            if pg.key.get_pressed()[pg.K_p]:
-                self.shop = not self.shop
-            if self.shop:
-                self.repair_center.display()
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    pg.quit()
-                    sys.exit()
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
+                    # Fire bullet from spaceship
+                    bullet = self.spaceship.shoot()
+                    self.bullets.add(bullet)
+                    
+                # Toggle the shop as in the original functionality
+                elif event.key == pg.K_p:
+                    self.shop = not self.shop
     
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.current_map.run()
+        
+        # Draw the spaceship and bullets
+        self.screen.blit(self.spaceship.image, self.spaceship.rect)
+        self.bullets.draw(self.screen)
+        
+        # Display shop if active
+        if self.shop:
+            self.repair_center.display()
 
+    def run(self):
+        while True:
+            self.handle_events()
+            self.update()
+            self.draw()
 
+# Main game execution
 if __name__ == "__main__":
     game = Game()
-    
