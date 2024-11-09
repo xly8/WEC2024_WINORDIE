@@ -154,18 +154,20 @@ class Player(pygame.sprite.Sprite):
         current_time = time.time()
         if direction == 'h':
             for sprite in self.obstacle_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
-                    if self.direction.x > 0:
-                        self.hitbox.right = sprite.hitbox.left
-                    elif self.direction.x < 0:
-                        self.hitbox.left = sprite.hitbox.right
+                if self.is_ship == False:
+                    if sprite.hitbox.colliderect(self.hitbox):
+                        if self.direction.x > 0:
+                            self.hitbox.right = sprite.hitbox.left
+                        elif self.direction.x < 0:
+                            self.hitbox.left = sprite.hitbox.right
         if direction == 'v':
             for sprite in self.obstacle_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
-                    if self.direction.y > 0:
-                        self.hitbox.bottom = sprite.hitbox.top
-                    elif self.direction.y < 0:
-                        self.hitbox.top = sprite.hitbox.bottom
+                if self.is_ship == False:
+                    if sprite.hitbox.colliderect(self.hitbox):
+                        if self.direction.y > 0:
+                            self.hitbox.bottom = sprite.hitbox.top
+                        elif self.direction.y < 0:
+                            self.hitbox.top = sprite.hitbox.bottom
         for sprite in self.door_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
                 if sprite.door_name == 'Merchant':
