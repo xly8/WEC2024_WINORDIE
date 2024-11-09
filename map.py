@@ -127,10 +127,6 @@ class Map:
                     # Check for game over
                     if self.player.health <= 0:
                         print("Game over!")                        
-                        break
-
-
-            self.visible_sprites.add(Asteroid(pos))
             
     def collide_asteroids(self):
         for asteroid in self.asteroid_sprites:
