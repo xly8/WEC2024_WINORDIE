@@ -161,8 +161,7 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-        for projectile in self.projectiles:
-            projectile.draw(screen)
+        
         
     def get_value_by_index(self, index):
         return list(self.stats.values())[index]

@@ -11,15 +11,15 @@ class Game:
         pg.init()
         self.screen = pg.display.set_mode((1280, 720))
         self.clock = pg.time.Clock()
-
+        self.in_ship = True
         # Initialize Spaceship in addition to Player, if keeping both
         self.player = Player()  # Keep this if needed
-        self.spaceship = Spaceship(start_position=(640, 360))  # New spaceship instance
+        self.spaceship = Spaceship(start_position=(800, 360))  # New spaceship instance
         
         # Bullet management
         self.bullets = pg.sprite.Group()
         
-        self.main_map = map.Map('tsx/CastleMap.tmx', self.player, (1194, 666))
+        self.main_map = map.Map('tsx/CastleMap.tmx', self.player, self.spaceship, self.in_ship, (1194, 666))
         self.current_map = self.main_map
         self.current_map.update_player_info()
         self.delta_time = 1
@@ -33,9 +33,9 @@ class Game:
         pg.display.set_caption(f"FPS: {self.clock.get_fps()}")
 
         # Update Spaceship and Bullets
-        keys = pg.key.get_pressed()
-        self.spaceship.update(self.delta_time, keys)
-        self.bullets.update(self.delta_time)
+        
+       
+       
         
         # Remove bullets off screen
         for bullet in self.bullets:
