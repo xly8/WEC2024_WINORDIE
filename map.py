@@ -53,7 +53,7 @@ class Map:
     
     def update_player_info(self, pos=0):
         self.player.set_sprites(self.obstacle_sprites,
-                                self.door_sprites, self.ship_sprites)
+                                self.door_sprites, self.ship_sprites, self.asteroid_sprites)
     
     def run(self):
         if self.active:
