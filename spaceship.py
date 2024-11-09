@@ -44,7 +44,7 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 class Spaceship(pygame.sprite.Sprite):
-    def __init__(self, start_position):
+    def __init__(self):
         super().__init__()
         
         # Load animation frames
@@ -59,13 +59,13 @@ class Spaceship(pygame.sprite.Sprite):
         # Rotate the initial frame 90 degrees clockwise to match upward direction
         self.original_image = pygame.transform.rotate(self.animation_frames[0], -90)
         self.image = self.original_image
-        self.rect = self.image.get_rect(center=start_position)
+        self.rect = self.image.get_rect(center=(2080,1168))
         
         # Initial attributes
         self.angle = 0  # Set initial angle to 0 as the asset is already pointing upwards
         self.direction = pygame.Vector2(0, -1)  # Default direction points upward
         self.momentum = pygame.Vector2(0, 0)
-        self.position = pygame.Vector2(start_position)
+        self.position = pygame.Vector2(2080, 1168)  # Initial position
     
     def animate(self):
         current_time = time.time()

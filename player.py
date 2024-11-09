@@ -15,6 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.upgrade_points = 1000
         self.max_stats = {"health": 10, "ammo": 100, "shooting_speed": 0.5, "projectile_count": 5, "max_health": 10, "max_ammo": 100, "speed": 10}
         self.speed = self.stats["speed"]
+        self.is_ship = False
         self.hitbox = self.rect.inflate(-35, -20)
         self.current_room = 0
         self.obstacle_sprites = None
@@ -142,7 +143,8 @@ class Player(pygame.sprite.Sprite):
                     self.current_room = 0
         for sprite in self.ship_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
-                print("touching ship")
+                if self.is_ship == False:
+                    self.is_ship = True
         for sprite in self.asteroid_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
                 print("touching asteroid")
