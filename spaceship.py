@@ -1,5 +1,7 @@
 import pygame
 import math
+import time
+
 
 # Initialize Pygame
 pygame.init()
@@ -46,28 +48,46 @@ class Spaceship(pygame.sprite.Sprite):
     def __init__(self, start_position):
         super().__init__()
         
-        # Original image (a pointy arrow pointing right by default)
-        self.original_image = pygame.image.load("tsx/Main Ship - Fighter Design.png")
+        # Load animation frames
+        self.animation_frames = [
+            pygame.image.load(f"Resources/ShipImages/ship{i}.png") 
+            for i in range(1, 5)
+        ]
+        self.animation_index = 0
+        self.animation_speed = 0.08
+        self.last_update = time.time()
         
+        # Set initial image
+        self.original_image = self.animation_frames[0]
         self.image = self.original_image
         self.rect = self.image.get_rect(center=start_position)
         
         # Initial attributes
         self.angle = 0
-        self.direction = pygame.Vector2(1, 0)  # Default direction vector
-        self.momentum = pygame.Vector2(0, 0)   # Momentum vector for smooth movement
-        self.position = pygame.Vector2(start_position)  # Use floating-point position for smoother movement
+        self.direction = pygame.Vector2(1, 0)
+        self.momentum = pygame.Vector2(0, 0)
+        self.position = pygame.Vector2(start_position)
+    
+    def animate(self):
+        current_time = time.time()
+        if current_time - self.last_update > self.animation_speed:
+            self.animation_index = (self.animation_index + 1) % 4
+            self.last_update = current_time
+            self.original_image = self.animation_frames[self.animation_index]
+            # Preserve rotation when updating animation frame
+            self.image = pygame.transform.rotate(self.original_image, -self.angle)
+            self.rect = self.image.get_rect(center=self.rect.center)
 
     def rotate(self, direction, delta_time):
         """Rotates the player."""
-        if direction == "left":  # Counterclockwise rotation
+        if direction == "left":
             self.angle -= ROTATION_SPEED * delta_time
-        elif direction == "right":  # Clockwise rotation
+        elif direction == "right":
             self.angle += ROTATION_SPEED * delta_time
-
-        # Update the rotated image
+        
+        # Rotate the current animation frame
         self.image = pygame.transform.rotate(self.original_image, -self.angle)
-        self.rect = self.image.get_rect(center=self.position)  # Update rect based on floating-point position
+        self.rect = self.image.get_rect(center=self.rect.center)
 
     def accelerate(self, delta_time):
         """Accelerates the player forward by adding to momentum."""
@@ -94,6 +114,7 @@ class Spaceship(pygame.sprite.Sprite):
 
     def update(self, delta_time, keys):
         """Updates player movement and rotation based on keys pressed."""
+        self.animate()  # Update animation frame
         if keys[pygame.K_a]:  # Rotate counterclockwise
             self.rotate("left", delta_time)
         if keys[pygame.K_d]:  # Rotate clockwise
