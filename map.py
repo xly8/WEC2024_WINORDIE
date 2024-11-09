@@ -26,8 +26,8 @@ class Map:
         for layer in self.tmx_data.visible_layers:
             ship_list = {'Ship'}
             ground_list = {'Ground', 'Carpet', 'Walkthrough objects'}
-            object_list = {'Objects', 'Buildings', 'Walls', 'WallOutline'}
-            decor_list = {'WallDecor', 'Decorations', 'Castle Decor'}
+            object_list = {'Objects', 'Buildings', 'Walls', 'WallOutline', 'Decorations'}
+            decor_list = {'WallDecor', 'Castle Decor'}
             for x, y, surf in layer.tiles():
                 pos = (x * 16, y * 16)
                 if layer.name == 'Doors':
