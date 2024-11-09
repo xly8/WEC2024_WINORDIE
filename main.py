@@ -18,6 +18,7 @@ class Game:
         self.current_map.update_player_info()
         self.delta_time = 1
         self.repair_center = RepairCenter(Player())
+        self.shop = False
         self.run()
         
     def update(self):
@@ -32,13 +33,13 @@ class Game:
                 sys.exit()
     
     def run(self):
-        shop = False
         while True:
             self.check_events()
             self.update()
             self.draw()
-            if pg.key.get_pressed()[pg.K_p] and shop == False:
-                self.shop = not shop
+            if pg.key.get_pressed()[pg.K_p]:
+                self.shop = not self.shop
+            if self.shop:
                 self.repair_center.display()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
