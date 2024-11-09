@@ -46,6 +46,10 @@ class Player(pygame.sprite.Sprite):
             pygame.image.load("Resources/AstronautImages/down3.png"),
             pygame.image.load("Resources/AstronautImages/down4.png")
         ]
+    
+    def set_sprites(self, obstacle_sprites, door_sprites):
+        self.obstacle_sprites = obstacle_sprites
+        self.door_sprites = door_sprites
 
     def animate(self):
         current_time = time.time()
