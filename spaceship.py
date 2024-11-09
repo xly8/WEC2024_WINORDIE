@@ -146,5 +146,3 @@ class Spaceship(pygame.sprite.Sprite):
             self.position.y = self.rect.height // 2
         if self.rect.bottom > HEIGHT:
             self.position.y = HEIGHT - self.rect.height // 2
-
-

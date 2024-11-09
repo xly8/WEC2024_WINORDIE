@@ -156,9 +156,11 @@ class Player(pygame.sprite.Sprite):
         elif power_type == "ammo":
             self.ammo = min(self.ammo + 15, self.max_ammo)
         elif power_type == "max_health":
-            self.max_health += 1
+            self.stats["max_health"] += 1
+            self.max_health = self.stats["max_health"]
         elif power_type == "max_ammo":
             self.max_ammo += 10
+        print(self.max_health)
 
     def collision(self, direction):
         current_time = time.time()

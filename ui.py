@@ -41,8 +41,8 @@ class UI:
 
     def display(self, player):
         self.show_bar(
-            player.health, player.stats['health'], self.health_bar_rect, 'red')
+            player.health, player.stats["max_health"], self.health_bar_rect, 'red')
 
-        self.show_text(player.health, player.stats['health'])
+        self.show_text(player.health, player.stats["max_health"])
 
         self.show_score(player.score)
