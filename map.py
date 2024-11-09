@@ -17,6 +17,7 @@ class Map:
         self.background_sprites = NoSortCameraGroup()
         self.obstacle_sprites = pg.sprite.Group()
         self.ground_sprites = NoSortCameraGroup()
+        self.ship_sprites = pg.sprite.Group()
         self.visible_sprites = YSortCameraGroup()
         self.visible_sprites.add(self.player)
         self.load_map()
@@ -33,6 +34,8 @@ class Map:
                     Door(pos, (self.visible_sprites, self.door_sprites), surf)
                 if layer.name == 'Star Background':
                     Tile(pos, self.background_sprites, surf)
+                if layer.name in ship_list:
+                    Tile(pos, (self.visible_sprites, self.ship_sprites), surf)
                 elif layer.name in ground_list:
                     Tile(pos, self.ground_sprites, surf)
                 elif layer.name in object_list:

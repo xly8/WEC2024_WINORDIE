@@ -5,7 +5,7 @@ import time
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Resources/WeaponImages/FirstWeapon.png")
+        self.image = pygame.image.load("Resources/AstronautImages/down1.png")
         self.rect = self.image.get_rect(center=(400, 300))
         self.health = 3
         self.max_health = 3
