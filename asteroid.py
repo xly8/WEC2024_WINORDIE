@@ -10,7 +10,7 @@ class Asteroid(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=pos)
         self.hitbox = self.rect.inflate(0, -10)
         self.health = 10
-        self.speed = 0.5
+        self.speed = 1
         self.target = target
         self.is_dying = False  # Track if asteroid is in the dying state
 

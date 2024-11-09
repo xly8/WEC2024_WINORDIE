@@ -130,6 +130,15 @@ class Map:
                         break
 
 
+            self.visible_sprites.add(Asteroid(pos))
+            
+    def collide_asteroids(self):
+        for asteroid in self.asteroid_sprites:
+            if asteroid.hitbox.colliderect(self.player.hitbox):
+                self.player.health -= 1
+                asteroid.take_damage(5)
+                if asteroid.health <= 0:
+                    asteroid.kill()
 
 class YSortCameraGroup(pg.sprite.Group):
     def __init__(self):
