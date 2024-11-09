@@ -62,8 +62,6 @@ class Game:
         self.current_map.run()
         
         # Draw the spaceship and bullets
-        self.screen.blit(self.spaceship.image, self.spaceship.rect)
-        self.bullets.draw(self.screen)
         
         # Display shop if active
         if self.shop:
