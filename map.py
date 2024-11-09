@@ -55,7 +55,7 @@ class Map:
             self.visible_sprites.custom_draw(self.player)
             
             self.obstacle_sprites.update()
-            self.background_sprites.update()
+            
             self.ground_sprites.update()
             self.visible_sprites.update()
             self.door_sprites.update()
