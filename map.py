@@ -5,6 +5,8 @@ from pytmx import load_pygame
 from tile import *
 from asteroid import Asteroid
 from ui import UI
+from enemy import Enemy
+import time
 
 
 class Map:
@@ -12,21 +14,32 @@ class Map:
         self.active = True
         self.directory = directory
         self.player = player
+
+        # Add invincibility attributes to player
+        self.player.last_hit_time = time.time()
+        self.player.invincibility_duration = 1.0  # 1 second invincibility
+
         self.startpos = startpos
         self.tmx_data = load_pygame(directory)
         self.display_surface = pg.display.get_surface()
+
+        # Initialize sprite groups
         self.asteroid_sprites = pg.sprite.Group()
         self.door_sprites = pg.sprite.Group()
         self.background_sprites = NoSortCameraGroup()
         self.obstacle_sprites = pg.sprite.Group()
         self.ground_sprites = NoSortCameraGroup()
         self.ship_sprites = pg.sprite.Group()
+        self.enemy_sprites = pg.sprite.Group()
         self.visible_sprites = YSortCameraGroup()
+
         self.visible_sprites.add(self.player)
         self.load_map()
         self.spawn_asteroids(5)
+        self.enemy_num = 5
+        self.spawn_enemies(self.enemy_num)
         self.ui = UI()
-        
+
     def load_map(self):
         for layer in self.tmx_data.visible_layers:
             ship_list = {'Ship'}
@@ -37,9 +50,9 @@ class Map:
                 pos = (x * 16, y * 16)
                 if layer.name == 'Doors':
                     Door(pos, (self.visible_sprites, self.door_sprites), surf)
-                if layer.name == 'Star Background':
+                elif layer.name == 'Star Background':
                     Tile(pos, self.background_sprites, surf)
-                if layer.name in ship_list:
+                elif layer.name in ship_list:
                     Tile(pos, (self.visible_sprites, self.ship_sprites), surf)
                 elif layer.name in ground_list:
                     Tile(pos, self.ground_sprites, surf)
@@ -52,26 +65,68 @@ class Map:
                     Tile(pos, self.visible_sprites, surf)
     
     def update_player_info(self, pos=0):
-        self.player.set_sprites(self.obstacle_sprites,
-                                self.door_sprites, self.ship_sprites)
+        self.player.set_sprites(
+            self.obstacle_sprites,
+            self.door_sprites,
+            self.ship_sprites,
+            self.asteroid_sprites  # Include asteroid_sprites here
+        )
+
     
     def run(self):
         if self.active:
             self.background_sprites.custom_draw(self.player)
             self.ground_sprites.custom_draw(self.player)
             self.visible_sprites.custom_draw(self.player)
+
+            # Update groups
             self.obstacle_sprites.update()
             self.ground_sprites.update()
             self.visible_sprites.update()
             self.door_sprites.update()
             self.asteroid_sprites.update()
+
+            # Update enemies and player collisions
+            self.update_enemies()
             self.ui.display(self.player)
             
     def spawn_asteroids(self, count):
         for _ in range(count):
             pos = (random.randint(0, 1280), random.randint(0, 720))
-            self.visible_sprites.add(Asteroid(pos))
-                    
+            asteroid = Asteroid(pos)
+            self.asteroid_sprites.add(asteroid)
+            self.visible_sprites.add(asteroid)
+    
+    def spawn_enemies(self, count):
+        """Spawn a number of enemies at random edge positions"""
+        for _ in range(count):
+            enemy = Enemy(
+                monster_name='enemy1',
+                groups=[self.visible_sprites, self.enemy_sprites],
+                obstacle_sprites=self.obstacle_sprites
+            )
+            self.enemy_sprites.add(enemy)
+
+
+    def update_enemies(self):
+        """Update all enemies with player position and handle collision."""
+        current_time = time.time()
+        for enemy in self.enemy_sprites:
+            enemy.update(self.player.rect.center, self.player)
+
+            # Collision detection with player
+            if enemy.hitbox.colliderect(self.player.hitbox):
+                if current_time - self.player.last_hit_time >= self.player.invincibility_duration:
+                    self.player.health -= enemy.damage
+                    self.player.last_hit_time = current_time
+                    print(f"Player hit! Health: {self.player.health}")
+
+                    # Check for game over
+                    if self.player.health <= 0:
+                        print("Game over!")                        
+                        break
+
+
 
 class YSortCameraGroup(pg.sprite.Group):
     def __init__(self):

@@ -143,13 +143,13 @@ class Player(pygame.sprite.Sprite):
         for sprite in self.ship_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
                 print("touching ship")
-        for sprite in self.asteroid_sprites:
-            if sprite.hitbox.colliderect(self.hitbox):
-                sprite.take_damage(5)
-                # Check if enough time has passed since last damage
-                if current_time - self.last_damage_time >= self.damage_interval:
-                    self.health -= 1
-                    self.last_damage_time = current_time
+        # for sprite in self.asteroid_sprites:
+        #     if sprite.hitbox.colliderect(self.hitbox):
+        #         sprite.take_damage(5)
+        #         # Check if enough time has passed since last damage
+        #         if current_time - self.last_damage_time >= self.damage_interval:
+        #             self.health -= 1
+        #             self.last_damage_time = current_time
 
     def update(self):
         self.input()
