@@ -6,7 +6,7 @@ class Asteroid(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
         self.image = pygame.image.load("Resources/AsteroidImages/explode1.png")
-        self.rect = self.image.get_rect(center=(2080, 1168))
+        self.rect = self.image.get_rect(center=pos)
         self.health = 20
         self.speed = 2
         self.asteroid_dying = self.load_asteroid_images()  # Load explosion images
