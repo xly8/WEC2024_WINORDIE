@@ -1,10 +1,11 @@
-import pygame
+import pygame 
 from projectile import Projectile
 import time
 
-class Player:
+class Player(pygame.sprite.Sprite):
     def __init__(self):
-        self.image = pygame.image.load("player.png")
+        super().__init__()
+        self.image = pygame.image.load("Resources/WeaponImages/FirstWeapon.png")
         self.rect = self.image.get_rect(center=(400, 300))
         self.health = 3
         self.max_health = 3
