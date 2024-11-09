@@ -55,7 +55,7 @@ class Spaceship(pygame.sprite.Sprite):
         self.animation_index = 0
         self.animation_speed = 0.08
         self.last_update = time.time()
-        
+        self.clock = pygame.time.Clock()
         # Rotate the initial frame 90 degrees clockwise to match upward direction
         self.original_image = pygame.transform.rotate(self.animation_frames[0], -90)
         self.image = self.original_image
@@ -112,9 +112,11 @@ class Spaceship(pygame.sprite.Sprite):
         """Creates a bullet traveling in the current facing direction."""
         return Bullet(self.rect.center, self.angle)
 
-    def update(self, delta_time, keys):
+    def update(self):
         """Updates player movement and rotation based on keys pressed."""
         self.animate()  # Update animation frame
+        delta_time = self.clock.tick(60) / 1000  # in seconds for smooth animation
+        keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:  # Rotate counterclockwise
             self.rotate("left", delta_time)
         if keys[pygame.K_d]:  # Rotate clockwise
@@ -146,56 +148,3 @@ class Spaceship(pygame.sprite.Sprite):
             self.position.y = HEIGHT - self.rect.height // 2
 
 
-class Game:
-    def __init__(self):
-        # Screen setup
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("WASD Rotating Arrow with Shooting")
-        self.clock = pygame.time.Clock()
-
-        # Sprite setup
-        self.player = Spaceship(start_position=(WIDTH // 2, HEIGHT // 2))
-        self.all_sprites = pygame.sprite.Group(self.player)
-        self.bullets = pygame.sprite.Group()  # Group to hold bullets
-        
-        # Running state
-        self.running = True
-
-    def handle_events(self):
-        """Handles game events."""
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:  # Shoot bullet
-                    bullet = self.player.shoot()
-                    self.all_sprites.add(bullet)
-                    self.bullets.add(bullet)
-
-    def update(self, delta_time):
-        """Updates all game elements."""
-        keys = pygame.key.get_pressed()
-        self.player.update(delta_time, keys)  # Only pass keys to player update
-        self.bullets.update(delta_time)  # Only update bullets without keys
-
-    def draw(self):
-        """Draws all game elements to the screen."""
-        self.screen.fill(BLACK)
-        self.all_sprites.draw(self.screen)
-        pygame.display.flip()
-
-    def run(self):
-        """Main game loop."""
-        while self.running:
-            delta_time = self.clock.tick(60) / 1000.0  # Convert to seconds
-            self.handle_events()
-            self.update(delta_time)
-            self.draw()
-        
-        pygame.quit()
-
-
-# Run the game
-if __name__ == "__main__":
-    game = Game()
-    game.run()

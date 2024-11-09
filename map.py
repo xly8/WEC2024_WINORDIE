@@ -5,13 +5,16 @@ from pytmx import load_pygame
 from tile import *
 from asteroid import Asteroid
 from ui import UI
-
+from spaceship import Spaceship
 
 class Map:
-    def __init__(self, directory, player, startpos):
+    def __init__(self, directory, player, spaceship, in_ship, startpos):
         self.active = True
+        self.in_ship = in_ship
         self.directory = directory
         self.player = player
+        self.spaceship = spaceship
+
         self.startpos = startpos
         self.tmx_data = load_pygame(directory)
         self.display_surface = pg.display.get_surface()
@@ -23,6 +26,9 @@ class Map:
         self.ship_sprites = pg.sprite.Group()
         self.visible_sprites = YSortCameraGroup()
         self.visible_sprites.add(self.player)
+        self.visible_sprites.add(self.spaceship)
+        
+      
         self.load_map()
         self.spawn_asteroids(5)
         self.ui = UI()
@@ -57,9 +63,11 @@ class Map:
     
     def run(self):
         if self.active:
-            self.background_sprites.custom_draw(self.player)
-            self.ground_sprites.custom_draw(self.player)
-            self.visible_sprites.custom_draw(self.player)
+            reference = self.spaceship if self.in_ship else self.player
+            self.background_sprites.custom_draw(reference)
+            self.ground_sprites.custom_draw(reference)
+            self.visible_sprites.custom_draw(reference)
+            
             self.obstacle_sprites.update()
             self.ground_sprites.update()
             self.visible_sprites.update()
