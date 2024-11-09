@@ -8,18 +8,24 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load("Resources/AstronautImages/down1.png")
         self.rect = self.image.get_rect(center=(2080, 1168))
         self.direction = pygame.math.Vector2()
-        self.speed = 4
+        self.stats = {"health": 3, "ammo": 50, "shooting_speed": 1, "projectile_count": 1, "max_health": 3, "max_ammo": 50, "speed": 4}
+        self.upgrade_cost = {"health": 100, "ammo": 100, "shooting_speed": 100, "projectile_count": 100, "max_health": 100, "max_ammo": 100, "speed": 100}
+        self.stats_level = {"health": 1, "ammo": 1, "shooting_speed": 1, "projectile_count": 1, "max_health": 1, "max_ammo": 1, "speed": 1}
+        self.upgrade_stats = {"health": 1, "ammo": 15, "shooting_speed": 0.1, "projectile_count": 1, "max_health": 1, "max_ammo": 10, "speed": 1}
+        self.upgrade_points = 1000
+        self.max_stats = {"health": 10, "ammo": 100, "shooting_speed": 0.5, "projectile_count": 5, "max_health": 10, "max_ammo": 100, "speed": 10}
+        self.speed = self.stats["speed"]
         self.hitbox = self.rect.inflate(-35, -20)
         self.current_room = 0
         self.obstacle_sprites = None
         self.door_sprites = None
-        self.health = 3
-        self.max_health = 3
-        self.ammo = 50
-        self.max_ammo = 50
+        self.health = self.stats["health"]
+        self.max_health = self.stats["max_health"]
+        self.ammo = self.stats["ammo"]
+        self.max_ammo = self.stats["max_ammo"]
         self.projectiles = []
-        self.shooting_speed = 1
-        self.projectile_count = 1
+        self.shooting_speed = self.stats["shooting_speed"]
+        self.projectile_count = self.stats["projectile_count"]
 
         # Animation settings
         self.last_pressed_key = None
@@ -139,3 +145,12 @@ class Player(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect)
         for projectile in self.projectiles:
             projectile.draw(screen)
+        
+    def get_value_by_index(self, index):
+        return list(self.stats.values())[index]
+
+    def get_cost_by_index(self, index):
+        return list(self.upgrade_cost.values())[index]
+
+    def get_level_by_index(self, index):
+        return list(self.stats_level.values())[index]
